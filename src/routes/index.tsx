@@ -6,8 +6,8 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Din Bil Sverige – AI Assistent" },
-      { name: "description", content: "AI-assistent för bilsök och e-post hos Din Bil Sverige." },
+      { title: "Din Bil Sverige – AI Assistant" },
+      { name: "description", content: "AI assistant for car search and email writing at Din Bil Sverige." },
     ],
   }),
 });
@@ -31,24 +31,24 @@ const inventoryText = INVENTORY.map(
   (c) => `- ${c.model} ${c.year} — ${c.price.toLocaleString("sv-SE")} kr (${c.fuel})`,
 ).join("\n");
 
-const SYSTEM_SEARCH = `Du är en hjälpsam bilförsäljare hos Din Bil Sverige. Hjälp kunden hitta rätt bil ur vårt lager. Ställ korta uppföljningsfrågor om budget, drivmedel och behov vid behov. Rekommendera MAX 2-3 bilar per svar. Var koncis, vänlig och professionell. Svara alltid på svenska.
+const SYSTEM_SEARCH = `You are a helpful car salesperson at Din Bil Sverige. Help the customer find the right car from our inventory. Ask short follow-up questions about budget, fuel type, and needs when relevant. Recommend a MAXIMUM of 2-3 cars per reply. Be concise, friendly, and professional. Always respond in English.
 
-Vårt aktuella lager:
+Our current inventory:
 ${inventoryText}`;
 
-const SYSTEM_EMAIL = `Du är en assistent för personal hos Din Bil Sverige. Hjälp dem skriva professionella, vänliga och tydliga kund-mejl på svenska. Fråga efter detaljer om det behövs (mottagare, syfte, ton). Leverera färdiga mejl med ämnesrad och hälsningsfras. Håll en professionell, hjälpsam ton.`;
+const SYSTEM_EMAIL = `You are an assistant for staff at Din Bil Sverige. Help them write professional, friendly, and clear customer emails in English. Ask for details if needed (recipient, purpose, tone). Deliver complete emails with a subject line and greeting. Maintain a professional, helpful tone.`;
 
 const SUGGESTIONS_SEARCH = [
-  "Jag söker en familjebil under 500 000 kr",
-  "Vilken elbil rekommenderar ni?",
-  "Visa era laddhybrider",
-  "Jag vill ha en sportig bil",
+  "I'm looking for a family car under 500,000 kr",
+  "Which electric car do you recommend?",
+  "Show me your plug-in hybrids",
+  "I want a sporty car",
 ];
 const SUGGESTIONS_EMAIL = [
-  "Skriv ett mejl om en provkörning",
-  "Bekräfta en serviceboka",
-  "Svara på en prisförfrågan",
-  "Tacka kunden för köpet",
+  "Write an email about a test drive",
+  "Confirm a service booking",
+  "Reply to a price inquiry",
+  "Thank the customer for their purchase",
 ];
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -115,14 +115,14 @@ function Index() {
       });
       const data = await res.json();
       if (!res.ok) {
-        const err = data?.error?.message || `Fel: ${res.status}`;
+        const err = data?.error?.message || `Error: ${res.status}`;
         setMessages([...next, { role: "assistant", content: `⚠️ ${err}` }]);
       } else {
-        const reply = data?.content?.[0]?.text || "(tomt svar)";
+        const reply = data?.content?.[0]?.text || "(empty response)";
         setMessages([...next, { role: "assistant", content: reply }]);
       }
     } catch (e: any) {
-      setMessages([...next, { role: "assistant", content: `⚠️ ${e?.message || "Nätverksfel"}` }]);
+      setMessages([...next, { role: "assistant", content: `⚠️ ${e?.message || "Network error"}` }]);
     } finally {
       setLoading(false);
     }
@@ -141,7 +141,7 @@ function Index() {
               style={{ backgroundColor: RED }}
             />
             <span className="font-semibold tracking-tight">Din Bil Sverige</span>
-            <span className="text-xs text-neutral-400 hidden sm:inline">AI-assistent</span>
+            <span className="text-xs text-neutral-400 hidden sm:inline">AI Assistant</span>
           </div>
           <button
             onClick={() => {
@@ -149,7 +149,7 @@ function Index() {
               setShowSettings(true);
             }}
             className="p-2 rounded hover:bg-white/10"
-            aria-label="Inställningar"
+            aria-label="Settings"
           >
             <Settings className="w-4 h-4" />
           </button>
@@ -157,8 +157,8 @@ function Index() {
         {/* Tabs */}
         <div className="max-w-3xl mx-auto px-4 flex gap-1">
           {([
-            { id: "search", label: "Bilsök", icon: Car },
-            { id: "email", label: "E-post", icon: Mail },
+            { id: "search", label: "Car Search", icon: Car },
+            { id: "email", label: "Email Writer", icon: Mail },
           ] as const).map((t) => {
             const active = mode === t.id;
             const Icon = t.icon;
@@ -192,12 +192,12 @@ function Index() {
                 {mode === "search" ? <Car className="w-6 h-6" /> : <Mail className="w-6 h-6" />}
               </div>
               <h1 className="text-lg font-semibold">
-                {mode === "search" ? "Hitta din nästa bil" : "Skriv ett kundmejl"}
+                {mode === "search" ? "Find your next car" : "Write a customer email"}
               </h1>
               <p className="text-sm text-neutral-500 mt-1">
                 {mode === "search"
-                  ? "Berätta vad du letar efter så hjälper jag dig."
-                  : "Beskriv mejlet du vill skicka."}
+                  ? "Tell me what you're looking for and I'll help you."
+                  : "Describe the email you want to send."}
               </p>
               <div className="flex flex-wrap gap-2 justify-center mt-6">
                 {suggestions.map((s) => (
@@ -250,7 +250,7 @@ function Index() {
               }
             }}
             rows={1}
-            placeholder={mode === "search" ? "Vad letar du efter?" : "Beskriv mejlet..."}
+            placeholder={mode === "search" ? "What are you looking for?" : "Describe the email..."}
             className="flex-1 resize-none rounded-xl border border-neutral-200 px-4 py-2.5 text-sm focus:outline-none focus:border-neutral-400 max-h-32"
           />
           <button
@@ -258,7 +258,7 @@ function Index() {
             disabled={!input.trim() || loading}
             className="h-10 w-10 rounded-xl flex items-center justify-center text-white disabled:opacity-40 transition-opacity"
             style={{ backgroundColor: RED }}
-            aria-label="Skicka"
+            aria-label="Send"
           >
             <Send className="w-4 h-4" />
           </button>
@@ -270,7 +270,7 @@ function Index() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold">Anthropic API-nyckel</h2>
+              <h2 className="font-semibold">Anthropic API Key</h2>
               {apiKey && (
                 <button onClick={() => setShowSettings(false)} className="p-1 hover:bg-neutral-100 rounded">
                   <X className="w-4 h-4" />
@@ -278,7 +278,7 @@ function Index() {
               )}
             </div>
             <p className="text-sm text-neutral-500 mb-3">
-              Nyckeln sparas i din webbläsare (localStorage) och skickas direkt till Anthropic.
+              The key is saved in your browser (localStorage) and sent directly to Anthropic.
             </p>
             <input
               type="password"
@@ -293,7 +293,7 @@ function Index() {
               className="mt-4 w-full py-2 rounded-lg text-white font-medium disabled:opacity-40"
               style={{ backgroundColor: RED }}
             >
-              Spara
+              Save
             </button>
           </div>
         </div>
