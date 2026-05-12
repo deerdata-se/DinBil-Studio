@@ -226,10 +226,7 @@ function Index() {
 
   const send = async (text: string) => {
     if (!text.trim() || loading) return;
-    if (!apiKey) {
-      setShowSettings(true);
-      return;
-    }
+    if (!apiKey) { setShowSettings(true); return; }
     const userMsg: Msg = { role: "user", content: text.trim() };
     const next = [...messages, userMsg];
     setMessages(next);
@@ -288,10 +285,7 @@ function Index() {
               <BookOpen className="w-4 h-4" />
             </button>
             <button
-              onClick={() => {
-                setKeyInput(apiKey);
-                setShowSettings(true);
-              }}
+              onClick={() => { setKeyInput(apiKey); setShowSettings(true); }}
               className="p-2 rounded hover:bg-white/10"
               aria-label="Settings"
             >
@@ -434,14 +428,16 @@ function Index() {
               )}
             </div>
             <p className="text-sm text-neutral-500 mb-3">
-              The key is saved in your browser (localStorage) and sent directly to Anthropic.
+              Saved in your browser only. Never sent anywhere except directly to Anthropic.
             </p>
             <input
               type="password"
               value={keyInput}
               onChange={(e) => setKeyInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && saveKey()}
               placeholder="sk-ant-..."
               className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"
+              autoFocus
             />
             <button
               onClick={saveKey}
