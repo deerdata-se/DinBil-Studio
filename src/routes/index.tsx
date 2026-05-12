@@ -99,7 +99,7 @@ This doesn't apply to every brief – service reminders, campaign offers, and st
 Before writing, check only for these two things — and only ask if the user has not already provided them:
 
 1. **Channel** – e.g. Instagram caption, Facebook post, Story, LinkedIn, print
-2. **Target audience** – who the copy is aimed at, e.g. barnfamiljer, elbilsintresserade, företagskunder, customers in a specific city. Ask "Who is the target audience?" — never "campaign group" or any other label.
+2. **Target audience** – who the copy is aimed at, e.g. barnfamilj, storstadsfamilj, elbilägare. Ask "Who is the target audience?" — never "campaign group" or any other label.
 
 If both are clear from the brief, go straight to writing — do not ask anything. Never ask about length, price, campaign dates, or other details. Don't invent specs, prices, or features. For technical claims about specific models, flag where verification is needed.
 
