@@ -150,19 +150,18 @@ function Index() {
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [showSettings, setShowSettings] = useState(false);
+  const [keyDraft, setKeyDraft] = useState("");
   const [sources, setSources] = useState<Source[]>([]);
   const [showSources, setShowSources] = useState(false);
   const [addTab, setAddTab] = useState<"paste" | "upload">("paste");
   const [addName, setAddName] = useState("");
   const [addContent, setAddContent] = useState("");
-  const keyInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const k = localStorage.getItem("anthropic_api_key") || "";
     setApiKey(k);
-    if (!k) setShowSettings(true);
   }, []);
 
   useEffect(() => {
@@ -186,10 +185,11 @@ function Index() {
   }, [messages, loading]);
 
   const saveKey = () => {
-    const val = keyInputRef.current?.value.trim() ?? "";
+    const val = keyDraft.trim();
     if (!val) return;
     localStorage.setItem("anthropic_api_key", val);
     setApiKey(val);
+    setKeyDraft("");
     setShowSettings(false);
   };
 
@@ -287,10 +287,8 @@ function Index() {
             </button>
             <button
               onClick={() => {
+                setKeyDraft(apiKey);
                 setShowSettings(true);
-                setTimeout(() => {
-                  if (keyInputRef.current) keyInputRef.current.value = apiKey;
-                }, 0);
               }}
               className="p-2 rounded hover:bg-white/10"
               aria-label="Settings"
@@ -421,35 +419,112 @@ function Index() {
         </div>
       </div>
 
-      {/* Settings modal */}
+      {/* Full-page API key setup (no modal overlay) */}
+      {!apiKey && !showSettings && (
+        <div className="fixed inset-0 bg-white flex items-center justify-center p-6 z-50">
+          <div style={{ width: "100%", maxWidth: "400px" }}>
+            <div className="flex items-center gap-2 mb-6">
+              <span className="inline-block w-2 h-6 rounded-sm" style={{ backgroundColor: RED }} />
+              <span className="font-semibold tracking-tight text-neutral-900">Din Bil Sverige</span>
+            </div>
+            <h2 className="text-xl font-semibold text-neutral-900 mb-1">Enter your API key</h2>
+            <p className="text-sm text-neutral-500 mb-4">
+              Saved in your browser only. Never sent anywhere except directly to Anthropic.
+            </p>
+            <input
+              type="text"
+              value={keyDraft}
+              onChange={(e) => setKeyDraft(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && saveKey()}
+              placeholder="sk-ant-..."
+              autoFocus
+              spellCheck={false}
+              autoComplete="off"
+              style={{
+                width: "100%",
+                border: "1px solid #e5e5e5",
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+                color: "#171717",
+                backgroundColor: "#ffffff",
+                outline: "none",
+                boxSizing: "border-box",
+              }}
+            />
+            <button
+              onClick={saveKey}
+              disabled={!keyDraft.trim()}
+              style={{
+                marginTop: "12px",
+                width: "100%",
+                padding: "10px",
+                borderRadius: "8px",
+                backgroundColor: RED,
+                color: "#fff",
+                fontWeight: 500,
+                fontSize: "14px",
+                border: "none",
+                cursor: keyDraft.trim() ? "pointer" : "not-allowed",
+                opacity: keyDraft.trim() ? 1 : 0.4,
+              }}
+            >
+              Save key
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Settings modal (update existing key) */}
       {showSettings && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold">Anthropic API Key</h2>
-              {apiKey && (
-                <button onClick={() => setShowSettings(false)} className="p-1 hover:bg-neutral-100 rounded">
-                  <X className="w-4 h-4" />
-                </button>
-              )}
+              <h2 className="font-semibold text-neutral-900">Update API Key</h2>
+              <button onClick={() => setShowSettings(false)} className="p-1 hover:bg-neutral-100 rounded">
+                <X className="w-4 h-4" />
+              </button>
             </div>
             <p className="text-sm text-neutral-500 mb-3">
               Saved in your browser only. Never sent anywhere except directly to Anthropic.
             </p>
             <input
-              ref={keyInputRef}
               type="text"
-              defaultValue=""
+              value={keyDraft}
+              onChange={(e) => setKeyDraft(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && saveKey()}
               placeholder="sk-ant-..."
-              className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 bg-white focus:outline-none focus:border-neutral-400"
+              autoFocus
               spellCheck={false}
               autoComplete="off"
+              style={{
+                width: "100%",
+                border: "1px solid #e5e5e5",
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+                color: "#171717",
+                backgroundColor: "#ffffff",
+                outline: "none",
+                boxSizing: "border-box",
+              }}
             />
             <button
               onClick={saveKey}
-              className="mt-4 w-full py-2 rounded-lg text-white font-medium"
-              style={{ backgroundColor: RED }}
+              disabled={!keyDraft.trim()}
+              style={{
+                marginTop: "16px",
+                width: "100%",
+                padding: "10px",
+                borderRadius: "8px",
+                backgroundColor: RED,
+                color: "#fff",
+                fontWeight: 500,
+                fontSize: "14px",
+                border: "none",
+                cursor: keyDraft.trim() ? "pointer" : "not-allowed",
+                opacity: keyDraft.trim() ? 1 : 0.4,
+              }}
             >
               Save
             </button>
