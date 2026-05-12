@@ -148,7 +148,7 @@ function Index() {
   const [emailMsgs, setEmailMsgs] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [apiKey, setApiKey] = useState("");
+  const [apiKey, setApiKey] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [keyDraft, setKeyDraft] = useState("");
   const [sources, setSources] = useState<Source[]>([]);
@@ -160,8 +160,7 @@ function Index() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const k = localStorage.getItem("anthropic_api_key") || "";
-    setApiKey(k);
+    setApiKey(localStorage.getItem("anthropic_api_key") ?? "");
   }, []);
 
   useEffect(() => {
@@ -227,7 +226,7 @@ function Index() {
 
   const send = async (text: string) => {
     if (!text.trim() || loading) return;
-    if (!apiKey) { setShowSettings(true); return; }
+    if (!apiKey) return;
     const userMsg: Msg = { role: "user", content: text.trim() };
     const next = [...messages, userMsg];
     setMessages(next);
@@ -266,6 +265,45 @@ function Index() {
   };
 
   const suggestions = mode === "copy" ? SUGGESTIONS_COPY : SUGGESTIONS_EMAIL;
+
+  // Still reading localStorage — show nothing to avoid flash
+  if (apiKey === null) return <div style={{ height: "100vh", backgroundColor: "#fff" }} />;
+
+  // No key saved — plain setup page (no overlay, no fixed positioning)
+  if (!apiKey) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", backgroundColor: "#fff", padding: "24px", fontFamily: "inherit" }}>
+        <div style={{ width: "100%", maxWidth: "400px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "24px" }}>
+            <span style={{ display: "inline-block", width: "8px", height: "24px", borderRadius: "3px", backgroundColor: RED }} />
+            <span style={{ fontWeight: 600, letterSpacing: "-0.01em", color: "#171717" }}>Din Bil Sverige</span>
+          </div>
+          <h2 style={{ fontSize: "20px", fontWeight: 600, color: "#171717", margin: "0 0 6px" }}>Enter your API key</h2>
+          <p style={{ fontSize: "14px", color: "#737373", margin: "0 0 16px" }}>
+            Saved in your browser only. Never sent anywhere except directly to Anthropic.
+          </p>
+          <input
+            type="text"
+            value={keyDraft}
+            onChange={(e) => setKeyDraft(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && saveKey()}
+            placeholder="sk-ant-..."
+            autoFocus
+            autoComplete="off"
+            spellCheck={false}
+            style={{ display: "block", width: "100%", boxSizing: "border-box", border: "1px solid #d4d4d4", borderRadius: "8px", padding: "10px 12px", fontSize: "14px", color: "#171717", backgroundColor: "#fff", outline: "none" }}
+          />
+          <button
+            onClick={saveKey}
+            disabled={!keyDraft.trim()}
+            style={{ marginTop: "12px", display: "block", width: "100%", padding: "10px", borderRadius: "8px", backgroundColor: RED, color: "#fff", fontWeight: 500, fontSize: "14px", border: "none", cursor: keyDraft.trim() ? "pointer" : "default", opacity: keyDraft.trim() ? 1 : 0.4 }}
+          >
+            Save key
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-white text-neutral-900">
@@ -418,62 +456,6 @@ function Index() {
           </button>
         </div>
       </div>
-
-      {/* Full-page API key setup (no modal overlay) */}
-      {!apiKey && !showSettings && (
-        <div className="fixed inset-0 bg-white flex items-center justify-center p-6 z-50">
-          <div style={{ width: "100%", maxWidth: "400px" }}>
-            <div className="flex items-center gap-2 mb-6">
-              <span className="inline-block w-2 h-6 rounded-sm" style={{ backgroundColor: RED }} />
-              <span className="font-semibold tracking-tight text-neutral-900">Din Bil Sverige</span>
-            </div>
-            <h2 className="text-xl font-semibold text-neutral-900 mb-1">Enter your API key</h2>
-            <p className="text-sm text-neutral-500 mb-4">
-              Saved in your browser only. Never sent anywhere except directly to Anthropic.
-            </p>
-            <input
-              type="text"
-              value={keyDraft}
-              onChange={(e) => setKeyDraft(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && saveKey()}
-              placeholder="sk-ant-..."
-              autoFocus
-              spellCheck={false}
-              autoComplete="off"
-              style={{
-                width: "100%",
-                border: "1px solid #e5e5e5",
-                borderRadius: "8px",
-                padding: "10px 12px",
-                fontSize: "14px",
-                color: "#171717",
-                backgroundColor: "#ffffff",
-                outline: "none",
-                boxSizing: "border-box",
-              }}
-            />
-            <button
-              onClick={saveKey}
-              disabled={!keyDraft.trim()}
-              style={{
-                marginTop: "12px",
-                width: "100%",
-                padding: "10px",
-                borderRadius: "8px",
-                backgroundColor: RED,
-                color: "#fff",
-                fontWeight: 500,
-                fontSize: "14px",
-                border: "none",
-                cursor: keyDraft.trim() ? "pointer" : "not-allowed",
-                opacity: keyDraft.trim() ? 1 : 0.4,
-              }}
-            >
-              Save key
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Settings modal (update existing key) */}
       {showSettings && (
