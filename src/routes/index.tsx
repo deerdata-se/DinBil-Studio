@@ -243,7 +243,7 @@ function Index() {
           "anthropic-dangerous-direct-browser-access": "true",
         },
         body: JSON.stringify({
-          model: "claude-haiku-4-5",
+          model: "claude-haiku-4-5-20251001",
           max_tokens: 2048,
           system: buildSystem(mode, sources),
           messages: next.map((m) => ({ role: m.role, content: m.content })),
@@ -283,7 +283,7 @@ function Index() {
             Saved in your browser only. Never sent anywhere except directly to Anthropic.
           </p>
           <input
-            type="text"
+            type="password"
             value={keyDraft}
             onChange={(e) => setKeyDraft(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && saveKey()}
@@ -471,7 +471,7 @@ function Index() {
               Saved in your browser only. Never sent anywhere except directly to Anthropic.
             </p>
             <input
-              type="text"
+              type="password"
               value={keyDraft}
               onChange={(e) => setKeyDraft(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && saveKey()}

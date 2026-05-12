@@ -8,6 +8,8 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 
+declare const __STATIC_SPA_BUILD__: boolean | undefined;
+
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -95,6 +97,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  // In the static SPA build, index.html already provides the HTML document structure.
+  // Rendering <html><head><body> inside #root creates invalid nested documents that
+  // can break event handling and input focus in browsers.
+  if (typeof __STATIC_SPA_BUILD__ !== "undefined" && __STATIC_SPA_BUILD__) {
+    return <>{children}</>;
+  }
   return (
     <html lang="en">
       <head>

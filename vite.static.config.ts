@@ -7,4 +7,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [TanStackRouterVite(), react(), tailwindcss(), tsconfigPaths()],
   base: "/DinBil-Studio/",
+  define: {
+    __STATIC_SPA_BUILD__: JSON.stringify(true),
+  },
 });
