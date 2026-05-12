@@ -150,12 +150,12 @@ function Index() {
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [showSettings, setShowSettings] = useState(false);
-  const [keyInput, setKeyInput] = useState("");
   const [sources, setSources] = useState<Source[]>([]);
   const [showSources, setShowSources] = useState(false);
   const [addTab, setAddTab] = useState<"paste" | "upload">("paste");
   const [addName, setAddName] = useState("");
   const [addContent, setAddContent] = useState("");
+  const keyInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -186,10 +186,11 @@ function Index() {
   }, [messages, loading]);
 
   const saveKey = () => {
-    localStorage.setItem("anthropic_api_key", keyInput.trim());
-    setApiKey(keyInput.trim());
+    const val = keyInputRef.current?.value.trim() ?? "";
+    if (!val) return;
+    localStorage.setItem("anthropic_api_key", val);
+    setApiKey(val);
     setShowSettings(false);
-    setKeyInput("");
   };
 
   const activeSources = sources.filter((s) => s.active);
@@ -285,7 +286,12 @@ function Index() {
               <BookOpen className="w-4 h-4" />
             </button>
             <button
-              onClick={() => { setKeyInput(apiKey); setShowSettings(true); }}
+              onClick={() => {
+                setShowSettings(true);
+                setTimeout(() => {
+                  if (keyInputRef.current) keyInputRef.current.value = apiKey;
+                }, 0);
+              }}
               className="p-2 rounded hover:bg-white/10"
               aria-label="Settings"
             >
@@ -431,9 +437,9 @@ function Index() {
               Saved in your browser only. Never sent anywhere except directly to Anthropic.
             </p>
             <input
+              ref={keyInputRef}
               type="text"
-              value={keyInput}
-              onChange={(e) => setKeyInput(e.target.value)}
+              defaultValue=""
               onKeyDown={(e) => e.key === "Enter" && saveKey()}
               placeholder="sk-ant-..."
               className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"
@@ -442,8 +448,7 @@ function Index() {
             />
             <button
               onClick={saveKey}
-              disabled={!keyInput.trim()}
-              className="mt-4 w-full py-2 rounded-lg text-white font-medium disabled:opacity-40"
+              className="mt-4 w-full py-2 rounded-lg text-white font-medium"
               style={{ backgroundColor: RED }}
             >
               Save
