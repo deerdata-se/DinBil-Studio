@@ -6,5 +6,5 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [TanStackRouterVite(), react(), tailwindcss(), tsconfigPaths()],
-  base: process.env.GITHUB_PAGES === "true" ? "/DinBil-Studio/" : "/",
+  base: "/DinBil-Studio/",
 });
