@@ -431,13 +431,14 @@ function Index() {
               Saved in your browser only. Never sent anywhere except directly to Anthropic.
             </p>
             <input
-              type="password"
+              type="text"
               value={keyInput}
               onChange={(e) => setKeyInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && saveKey()}
               placeholder="sk-ant-..."
               className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"
-              autoFocus
+              spellCheck={false}
+              autoComplete="off"
             />
             <button
               onClick={saveKey}
