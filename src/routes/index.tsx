@@ -276,7 +276,7 @@ function Index() {
           "anthropic-dangerous-direct-browser-access": "true",
         },
         body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001",
+          model: "claude-opus-4-7",
           max_tokens: 2048,
           system: buildSystem(mode, sources),
           messages: next.map((m) => ({ role: m.role, content: m.content })),
