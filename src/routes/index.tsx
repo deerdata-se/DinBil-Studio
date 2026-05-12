@@ -442,7 +442,7 @@ function Index() {
               defaultValue=""
               onKeyDown={(e) => e.key === "Enter" && saveKey()}
               placeholder="sk-ant-..."
-              className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"
+              className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 bg-white focus:outline-none focus:border-neutral-400"
               spellCheck={false}
               autoComplete="off"
             />
@@ -538,14 +538,14 @@ function Index() {
                         value={addName}
                         onChange={(e) => setAddName(e.target.value)}
                         placeholder="Source name"
-                        className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"
+                        className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 bg-white focus:outline-none focus:border-neutral-400"
                       />
                       <textarea
                         value={addContent}
                         onChange={(e) => setAddContent(e.target.value)}
                         placeholder="Paste reference material here…"
                         rows={5}
-                        className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:border-neutral-400 resize-none"
+                        className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 bg-white focus:outline-none focus:border-neutral-400 resize-none"
                       />
                       <button
                         onClick={addPasteSource}
